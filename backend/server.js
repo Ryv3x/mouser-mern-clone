@@ -45,7 +45,20 @@ seedHelpPages();
 
 const app = express();
 
-app.use(cors());
+// Configure CORS to allow the frontend origin (set FRONTEND_URL in production)
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. server-to-server, Postman)
+      if (!origin) return callback(null, true);
+      if (origin === FRONTEND_URL) return callback(null, true);
+      return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Serve uploaded files (seller logos, product images, etc.)
@@ -61,6 +74,10 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/home-settings', homeRoutes);
 app.use('/api/public', publicRoutes);
+// Simple health / test endpoint to verify API connectivity from the frontend
+app.get('/api/test', (req, res) => {
+  res.json({ ok: true, env: process.env.NODE_ENV || 'development', time: new Date().toISOString() });
+});
 
 app.use(notFound);
 app.use(errorHandler);
