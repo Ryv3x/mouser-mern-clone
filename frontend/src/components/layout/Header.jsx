@@ -226,11 +226,11 @@ const Header = () => {
 
           {/* User Profile */}
           <motion.div className="flex items-center gap-2 sm:gap-3 justify-end" variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div variants={itemVariants}>
+              <NotificationBell />
+            </motion.div>
             {user ? (
               <>
-                <motion.div variants={itemVariants}>
-                  <NotificationBell />
-                </motion.div>
                 {/* User Profile Dropdown */}
                 <motion.div ref={userMenuRef} variants={itemVariants} className="relative">
                   <motion.button
