@@ -2,9 +2,22 @@ import axios from 'axios';
 import store from '../store/store';
 import { logout } from '../store/authSlice';
 
+// API origin (frontend runtime/build-time) - Vite requires VITE_ prefix
+const API_ORIGIN = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '';
+const apiBase = API_ORIGIN ? `${API_ORIGIN}/api` : '/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: apiBase,
 });
+
+// Helper to build full upload/static URLs that live on the backend
+export const getUploadUrl = (uploadPath) => {
+  if (!uploadPath) return '';
+  if (/^https?:\/\//i.test(uploadPath)) return uploadPath;
+  // ensure leading slash
+  const path = uploadPath.startsWith('/') ? uploadPath : `/${uploadPath}`;
+  return API_ORIGIN ? `${API_ORIGIN}${path}` : path;
+};
 
 // attach token if available
 api.interceptors.request.use((config) => {
@@ -28,3 +41,5 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+export { API_ORIGIN };
