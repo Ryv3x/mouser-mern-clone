@@ -120,18 +120,24 @@ const AllManufacturers = () => {
                 whileHover={{ y: -8 }}
                 className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition"
               >
-                {/* Logo Section */}
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center overflow-hidden">
-                  {manufacturer.logo ? (
-                    <img
-                      src={manufacturer.logo}
-                      alt={manufacturer.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-5xl">🏭</div>
-                  )}
-                </div>
+                {/* Banner / Logo Section */}
+                {manufacturer.banner ? (
+                  <div className="h-40 w-full overflow-hidden">
+                    <img src={manufacturer.banner} alt={`${manufacturer.name} banner`} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="h-40 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center overflow-hidden">
+                    {manufacturer.logo ? (
+                      <img
+                        src={manufacturer.logo}
+                        alt={manufacturer.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-5xl">🏭</div>
+                    )}
+                  </div>
+                )}
 
                 {/* Content Section */}
                 <div className="p-6">

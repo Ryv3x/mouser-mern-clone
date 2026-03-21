@@ -12,6 +12,7 @@ const UserSettings = () => {
   const { user } = useSelector((state) => state.auth);
 
   const [activeTab, setActiveTab] = useState('password');
+  const [profileForm, setProfileForm] = useState({ name: user?.name || '', avatar: user?.avatar || '', banner: user?.banner || '' });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
@@ -132,6 +133,7 @@ const UserSettings = () => {
   };
 
   const tabs = [
+    { id: 'profile', label: 'Profile', icon: 'user' },
     { id: 'password', label: 'Change Password', icon: Lock },
     { id: 'preferences', label: 'Preferences', icon: 'settings' },
   ];
@@ -215,6 +217,71 @@ const UserSettings = () => {
           {/* Tab Content */}
           <div className="p-8">
             {/* Password Tab */}
+            {/* Profile Tab */}
+            {activeTab === 'profile' && (
+              <motion.form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    setLoading(true);
+                    await api.put('/users/profile', profileForm);
+                    showMessage('Profile updated successfully!', 'success');
+                    setTimeout(() => window.location.reload(), 800);
+                  } catch (err) {
+                    showMessage(err.response?.data?.message || 'Failed to update profile', 'error');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className="space-y-6"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    value={profileForm.name}
+                    onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Avatar URL</label>
+                  <input
+                    type="text"
+                    value={profileForm.avatar}
+                    onChange={(e) => setProfileForm({ ...profileForm, avatar: e.target.value })}
+                    placeholder="https://.../avatar.png"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Recommended avatar size: 320x320 px (square)</p>
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Banner URL (optional)</label>
+                  <input
+                    type="text"
+                    value={profileForm.banner}
+                    onChange={(e) => setProfileForm({ ...profileForm, banner: e.target.value })}
+                    placeholder="https://.../banner.jpg"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Recommended banner size for manufacturer page: 1400×300 px</p>
+                </motion.div>
+
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Saving...' : 'Save Profile'}
+                </motion.button>
+              </motion.form>
+            )}
+
             {activeTab === 'password' && (
               <motion.form
                 onSubmit={handlePasswordChange}

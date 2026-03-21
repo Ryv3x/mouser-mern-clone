@@ -11,6 +11,8 @@ const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: '', slug: '' });
+  const [iconImage, setIconImage] = useState('');
+  const [emojiIcon, setEmojiIcon] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -59,11 +61,13 @@ const AdminCategories = () => {
     try {
       setLoading(true);
       if (editingId) {
-        const { data } = await api.put(`/categories/${editingId}`, form);
+        const payload = { ...form, iconImage: iconImage || undefined, icon: emojiIcon || form.icon || undefined };
+        const { data } = await api.put(`/categories/${editingId}`, payload);
         setSuccess(`Category "${form.name}" updated successfully!`);
         dispatch(updateCategory(data));
       } else {
-        const { data } = await api.post('/categories', form);
+        const payload = { ...form, iconImage: iconImage || undefined, icon: emojiIcon || undefined };
+        const { data } = await api.post('/categories', payload);
         setSuccess(`Category "${form.name}" created successfully!`);
         dispatch(addCategory(data));
       }
@@ -203,6 +207,30 @@ const AdminCategories = () => {
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">🔗 Auto-generated from name</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Icon Image URL (optional)</label>
+                <input
+                  type="text"
+                  value={iconImage}
+                  onChange={(e) => setIconImage(e.target.value)}
+                  placeholder="https://.../icon.png"
+                  className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-200 transition bg-white"
+                />
+                <p className="text-xs text-gray-500 mt-1">Recommended: 320x320 PNG/JPG. If empty, you can set an emoji below.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Emoji Icon (fallback)</label>
+                <input
+                  type="text"
+                  value={emojiIcon}
+                  onChange={(e) => setEmojiIcon(e.target.value)}
+                  placeholder="e.g. 📦 or 🔌"
+                  className="w-32 px-3 py-2 border-2 border-blue-200 rounded-xl focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-200 transition bg-white"
+                />
+                <p className="text-xs text-gray-500 mt-1">If no image is available, use a single emoji (recommended).</p>
               </div>
 
               <div className="flex gap-3 pt-4">

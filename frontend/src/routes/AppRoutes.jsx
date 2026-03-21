@@ -28,6 +28,7 @@ import ApplySeller from '../pages/ApplySeller';
 import InfoPage from '../pages/InfoPage';
 import Sponsors from '../pages/Sponsors';
 import AllManufacturers from '../pages/AllManufacturers';
+import Categories from '../pages/Categories';
 import UserProfile from '../pages/UserProfile';
 import UserSettings from '../pages/UserSettings';
 import NotFound from '../pages/NotFound';
@@ -45,6 +46,7 @@ const AppRoutes = () => (
     <Route path="/product/:productId" element={<AnimatedWrapper><ProductDetails /></AnimatedWrapper>} />
     <Route path="/seller/:sellerId" element={<AnimatedWrapper><SellerProfile /></AnimatedWrapper>} />
     <Route path="/manufacturers" element={<AnimatedWrapper><AllManufacturers /></AnimatedWrapper>} />
+    <Route path="/categories" element={<AnimatedWrapper><Categories /></AnimatedWrapper>} />
     <Route path="/sponsors" element={<AnimatedWrapper><Sponsors /></AnimatedWrapper>} />
     <Route path="/search" element={<AnimatedWrapper><SearchPage /></AnimatedWrapper>} />
     <Route path="/cart" element={<AnimatedWrapper><CartPage /></AnimatedWrapper>} />
