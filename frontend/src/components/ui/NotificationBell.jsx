@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, X, Check } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +11,9 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const bellRef = useRef(null);
+  const panelRef = useRef(null);
+  const [panelStyle, setPanelStyle] = useState({});
 
   const fetchNotifications = async () => {
     try {
@@ -34,6 +38,29 @@ const NotificationBell = () => {
       if (open) fetchNotifications();
     }, 10000);
     return () => clearInterval(interval);
+  }, [open]);
+
+  // Compute panel position to avoid clipping; use fixed portal so it's not clipped by ancestors
+  useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const btn = bellRef.current;
+      const panel = panelRef.current;
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset;
+      const top = rect.bottom + 8 + scrollY;
+      const right = 16; // keep small gap from edge
+      // limit max width via CSS class; set left/right to stabilize
+      setPanelStyle({ position: 'fixed', top: `${top}px`, right: `${right}px`, left: 'auto' });
+    };
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, true);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update, true);
+    };
   }, [open]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -79,6 +106,7 @@ const NotificationBell = () => {
   return (
     <div className="relative">
       <motion.button
+        ref={bellRef}
         onClick={() => setOpen((o) => !o)}
         className="relative text-white hover:text-blue-100 transition-colors"
         whileHover={{ scale: 1.1 }}
@@ -103,14 +131,16 @@ const NotificationBell = () => {
       </motion.button>
 
       <AnimatePresence>
-        {open && (
+        {open && bellRef.current && createPortal(
           <motion.div
+            ref={panelRef}
             key="notifications-panel"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-xl shadow-2xl z-50 overflow-hidden border border-gray-200 max-w-[calc(100vw-2rem)]"
+            style={panelStyle}
+            className="w-80 md:w-96 bg-white rounded-xl shadow-2xl z-50 overflow-hidden border border-gray-200 max-w-[calc(100vw-2rem)]"
           >
             <motion.div
               className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex justify-between items-center"
