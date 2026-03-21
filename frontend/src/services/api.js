@@ -2,19 +2,9 @@ import axios from 'axios';
 import store from '../store/store';
 import { logout } from '../store/authSlice';
 
-// Build-time API origin (Vite requires VITE_ prefix)
-const BUILT_API_ORIGIN = import.meta.env.VITE_API_URL ? String(import.meta.env.VITE_API_URL).replace(/\/$/, '') : '';
-
-// Runtime host -> backend mapping (force fix for deployed frontend)
-const RUNTIME_FALLBACKS = {
-  'mouser-mern-clone.vercel.app': 'https://mouser-mern-clone.onrender.com',
-};
-
-const runtimeHost = (typeof window !== 'undefined' && window.location && window.location.hostname) ? window.location.hostname : '';
-
-// Final API origin: prefer build-time, else runtime fallback for known hostnames
-const API_ORIGIN = BUILT_API_ORIGIN || RUNTIME_FALLBACKS[runtimeHost] || '';
-const BASE_URL = API_ORIGIN ? `${API_ORIGIN}/api` : '/api';
+// Hardcoded backend origin (per request) — no envs used in frontend
+const API_ORIGIN = 'https://mouser-mern-clone.onrender.com';
+const BASE_URL = `${API_ORIGIN}/api`;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -26,7 +16,7 @@ export const getUploadUrl = (uploadPath) => {
   if (!uploadPath) return '';
   if (/^https?:\/\//i.test(uploadPath)) return uploadPath;
   const path = uploadPath.startsWith('/') ? uploadPath : `/${uploadPath}`;
-  return API_ORIGIN ? `${API_ORIGIN}${path}` : path;
+  return `${API_ORIGIN}${path}`;
 };
 
 // attach token if available
@@ -56,7 +46,7 @@ api.interceptors.response.use(
 );
 
 // Runtime fetch interceptor: rewrite requests starting with '/api' to the forced backend origin
-if (typeof window !== 'undefined' && API_ORIGIN) {
+if (typeof window !== 'undefined') {
   const originalFetch = window.fetch;
   window.fetch = function (input, init) {
     try {
