@@ -131,7 +131,7 @@ const NotificationBell = () => {
       </motion.button>
 
       <AnimatePresence>
-        {open && bellRef.current && createPortal(
+        {open && bellRef.current && typeof document !== 'undefined' && createPortal(
           <motion.div
             ref={panelRef}
             key="notifications-panel"
@@ -160,9 +160,9 @@ const NotificationBell = () => {
                 <X size={20} />
               </motion.button>
             </motion.div>
-
+      >
             <div className="max-h-96 overflow-y-auto">
-              {loading && (
+      , document.body)}
                 <motion.div className="p-6 text-center" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>
                   <div className="inline-flex items-center gap-2">
                     <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
