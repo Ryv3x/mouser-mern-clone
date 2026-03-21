@@ -3,11 +3,10 @@ import { useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, MapPin, Phone, Mail, ShoppingBag, Award, Clock } from 'lucide-react';
-import api from '../services/api';
+import api, { getUploadUrl } from '../services/api';
 import ProductGrid from '../components/product/ProductGrid';
 import Loader from '../components/common/Loader';
 
-const backendBase = import.meta.env.VITE_API_URL ? String(import.meta.env.VITE_API_URL).replace(/\/api$/, '') : 'http://localhost:5000';
 
 const SellerProfile = () => {
   const { sellerId } = useParams();
@@ -92,7 +91,7 @@ const SellerProfile = () => {
             {/* Avatar */}
             <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white/20 rounded-full flex items-center justify-center text-5xl">
               {seller.logo ? (
-                <img src={seller.logo.startsWith('data:') ? seller.logo : (seller.logo.startsWith('/uploads') ? `${backendBase}${seller.logo}` : seller.logo)} alt={seller.name} className="w-full h-full rounded-full object-cover" />
+                <img src={seller.logo.startsWith('data:') ? seller.logo : getUploadUrl(seller.logo)} alt={seller.name} className="w-full h-full rounded-full object-cover" />
               ) : (
                 '🏪'
               )}
@@ -221,7 +220,7 @@ const SellerProfile = () => {
                         {editForm.logoPreview ? (
                           <img src={editForm.logoPreview} alt="preview" className="w-full h-full object-cover" />
                         ) : editForm.logo ? (
-                          <img src={editForm.logo.startsWith('/uploads') ? `${backendBase}${editForm.logo}` : editForm.logo} alt="preview" className="w-full h-full object-cover" />
+                          <img src={editForm.logo.startsWith('data:') ? editForm.logo : getUploadUrl(editForm.logo)} alt="preview" className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-2xl">🏪</div>
                         )}
