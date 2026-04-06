@@ -159,17 +159,22 @@ const NotificationBell = () => {
               >
                 <X size={20} />
               </motion.button>
-            </motion.div>
-      >
-            <div className="max-h-96 overflow-y-auto">
-      , document.body)}
-                <motion.div className="p-6 text-center" animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                  <div className="inline-flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-                    <span className="text-sm text-gray-600">Loading...</span>
-                  </div>
-                </motion.div>
-              )}
+         </motion.div>
+
+<div className="max-h-96 overflow-y-auto">
+
+  {loading && (
+    <motion.div
+      className="p-6 text-center"
+      animate={{ opacity: [0.5, 1, 0.5] }}
+      transition={{ duration: 1.5, repeat: Infinity }}
+    >
+      <div className="inline-flex items-center gap-2">
+        <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+        <span className="text-sm text-gray-600">Loading...</span>
+      </div>
+    </motion.div>
+  )}
 
               {!loading && notifications.length === 0 && (
                 <motion.div className="p-8 text-center text-gray-500" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
