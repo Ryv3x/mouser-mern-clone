@@ -14,6 +14,7 @@ const NotificationBell = () => {
   const bellRef = useRef(null);
   const panelRef = useRef(null);
   const [panelStyle, setPanelStyle] = useState({});
+  const [portalEl, setPortalEl] = useState(null);
 
   const fetchNotifications = async () => {
     try {
@@ -26,6 +27,11 @@ const NotificationBell = () => {
         dispatch(setCredentials({ user, token: localStorage.getItem('token') }));
       }
     } catch (err) {
+      // If not authenticated, clear notifications silently to avoid throwing UI errors
+      if (err.response?.status === 401) {
+        setNotifications([]);
+        return;
+      }
       console.error('Failed to load notifications', err);
     } finally {
       setLoading(false);
@@ -62,6 +68,21 @@ const NotificationBell = () => {
       window.removeEventListener('scroll', update, true);
     };
   }, [open]);
+
+  // Create a stable portal container on mount to avoid targeting null
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const el = document.createElement('div');
+    el.setAttribute('data-portal', 'notifications');
+    document.body.appendChild(el);
+    setPortalEl(el);
+    return () => {
+      try {
+        document.body.removeChild(el);
+      } catch (e) {}
+      setPortalEl(null);
+    };
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -131,7 +152,7 @@ const NotificationBell = () => {
       </motion.button>
 
       <AnimatePresence>
-        {open && bellRef.current && typeof document !== 'undefined' && createPortal(
+        {open && portalEl && createPortal(
           <motion.div
             ref={panelRef}
             key="notifications-panel"
@@ -195,7 +216,7 @@ const NotificationBell = () => {
                   >
                     <motion.div className="flex gap-3" onClick={() => markRead(n._id)} whileHover={{ x: 5 }}>
                       {n.image ? (
-                        <img src={n.image} alt="notif" className="w-12 h-12 rounded-md object-cover" />
+                        <img src={n.image} alt="notif" className="w-12 h-12 rounded-md object-cover" onError={(e)=>{e.currentTarget.style.display='none'}} />
                       ) : (
                         <div className={`mt-1 ${getIconColor(n.type)}`}>{n.type === 'success' ? <Check size={20} /> : <Bell size={20} />}</div>
                       )}
