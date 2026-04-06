@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';
 import { setCredentials } from '../../store/authSlice';
 
-const NotificationBell = () => {
+  const NotificationBell = () => {
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
@@ -18,6 +18,12 @@ const NotificationBell = () => {
 
   const fetchNotifications = async () => {
     try {
+      // if no auth token, don't call notifications endpoint (prevents 401 spam)
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
+      if (!token) {
+        setNotifications([]);
+        return;
+      }
       setLoading(true);
       const { data } = await api.get('/users/notifications');
       setNotifications(data || []);
@@ -152,7 +158,8 @@ const NotificationBell = () => {
       </motion.button>
 
       <AnimatePresence>
-        {open && portalEl && createPortal(
+        {open && (() => {
+          const panelNode = (
           <motion.div
             ref={panelRef}
             key="notifications-panel"
@@ -245,7 +252,20 @@ const NotificationBell = () => {
               </motion.div>
             )}
           </motion.div>
-        )}
+          );
+
+          // Try to mount into portal; if it fails, render inline fallback to avoid crashing
+          if (portalEl) {
+            try {
+              return createPortal(panelNode, portalEl);
+            } catch (err) {
+              console.error('Portal mount failed, falling back to inline render', err);
+              return panelNode;
+            }
+          }
+
+          return panelNode;
+        })()}
       </AnimatePresence>
     </div>
   );
