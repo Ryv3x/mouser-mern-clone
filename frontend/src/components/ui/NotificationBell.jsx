@@ -80,6 +80,8 @@ import { setCredentials } from '../../store/authSlice';
     if (typeof document === 'undefined') return;
     const el = document.createElement('div');
     el.setAttribute('data-portal', 'notifications');
+    // ensure portal sits above most layout elements
+    try { el.style.zIndex = '9999'; } catch (e) {}
     document.body.appendChild(el);
     setPortalEl(el);
     return () => {
@@ -158,8 +160,9 @@ import { setCredentials } from '../../store/authSlice';
       </motion.button>
 
       <AnimatePresence>
-        {open && (() => {
-          const panelNode = (
+          {open && (() => {
+            const fallbackPanelStyle = { position: 'fixed', top: '60px', right: '16px', left: 'auto' };
+            const panelNode = (
           <motion.div
             ref={panelRef}
             key="notifications-panel"
@@ -253,18 +256,20 @@ import { setCredentials } from '../../store/authSlice';
             )}
           </motion.div>
           );
+          // ensure panel has a usable style if compute failed
+          const finalPanel = React.cloneElement(panelNode, { style: Object.keys(panelStyle || {}).length ? panelStyle : fallbackPanelStyle });
 
           // Try to mount into portal; if it fails, render inline fallback to avoid crashing
           if (portalEl) {
             try {
-              return createPortal(panelNode, portalEl);
+              return createPortal(finalPanel, portalEl);
             } catch (err) {
               console.error('Portal mount failed, falling back to inline render', err);
-              return panelNode;
+              return finalPanel;
             }
           }
 
-          return panelNode;
+          return finalPanel;
         })()}
       </AnimatePresence>
     </div>
