@@ -6,7 +6,7 @@ import api from '../services/api';
 const SellerEditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', price: '', stock: '', description: '', imageUrl: '' });
+  const [form, setForm] = useState({ name: '', price: '', sellerPrice: '', minQuantity: 1, stock: '', description: '', imageUrl: '' });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -14,8 +14,16 @@ const SellerEditProduct = () => {
     const fetch = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get(`/seller/products/${id}`);
-        if (data) setForm({ name: data.name || '', price: data.price || '', stock: data.stock || '', description: data.description || '', imageUrl: data.imageUrl || '' });
+        const { data } = await api.get(`/products/${id}`);
+        if (data) setForm({
+          name: data.name || '',
+          price: data.price || '',
+          sellerPrice: data.sellerPrice || '',
+          minQuantity: data.minQuantity || 1,
+          stock: data.stock || '',
+          description: data.description || '',
+          imageUrl: data.imageUrl || ''
+        });
       } catch (err) {
         console.error('Failed to load product:', err);
       } finally {
@@ -29,8 +37,8 @@ const SellerEditProduct = () => {
     e.preventDefault();
     try {
       setSubmitting(true);
-      const payload = { ...form, price: parseFloat(form.price || 0), stock: parseInt(form.stock || 0, 10) };
-      await api.put(`/seller/products/${id}`, payload);
+      const payload = { ...form, price: parseFloat(form.price || 0), sellerPrice: form.sellerPrice !== '' ? parseFloat(form.sellerPrice) : undefined, minQuantity: parseInt(form.minQuantity || 1, 10), stock: parseInt(form.stock || 0, 10) };
+      await api.put(`/products/${id}`, payload);
       navigate('/seller/products');
     } catch (err) {
       console.error('Update failed:', err);

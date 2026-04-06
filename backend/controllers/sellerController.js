@@ -34,7 +34,7 @@ export const getSellerProducts = async (req, res) => {
 
 export const addSellerProduct = async (req, res) => {
   try {
-    let { name, price, stock, images, category, manufacturer, manufacturerPartNumber, description, specifications } = req.body;
+    let { name, price, stock, images, category, manufacturer, manufacturerPartNumber, description, specifications, minQuantity, sellerPrice } = req.body;
 
     // Cheatcode: if any field is 'idk' treat as safe default
     const anyIdk = [name, price, stock, ...(images || []), category, manufacturer, manufacturerPartNumber, description, specifications].some((v) => v === 'idk');
@@ -61,6 +61,16 @@ export const addSellerProduct = async (req, res) => {
       return res.status(400).json({ message: 'Valid stock quantity is required' });
     }
 
+    // validate minQuantity and sellerPrice if provided
+    if (minQuantity !== undefined && minQuantity !== null) {
+      const mq = parseInt(minQuantity, 10);
+      if (isNaN(mq) || mq < 1) return res.status(400).json({ message: 'minQuantity must be an integer >= 1' });
+    }
+    if (sellerPrice !== undefined && sellerPrice !== null && sellerPrice !== '') {
+      const sp = parseFloat(sellerPrice);
+      if (isNaN(sp) || sp < 0) return res.status(400).json({ message: 'sellerPrice must be a non-negative number' });
+    }
+
     // Handle category: allow passing slug/name instead of ObjectId
     let categoryId = null;
     if (category) {
@@ -80,6 +90,8 @@ export const addSellerProduct = async (req, res) => {
     const product = new Product({
       name: String(name).trim(),
       price: parseFloat(price) || 0,
+      sellerPrice: sellerPrice !== undefined && sellerPrice !== null && sellerPrice !== '' ? parseFloat(sellerPrice) : undefined,
+      minQuantity: minQuantity !== undefined && minQuantity !== null ? parseInt(minQuantity, 10) : 1,
       stock: parseInt(stock, 10) || 0,
       images: Array.isArray(images) ? images.filter((img) => img && String(img).trim()) : [],
       category: categoryId,

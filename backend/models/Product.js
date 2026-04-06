@@ -9,6 +9,9 @@ const productSchema = new mongoose.Schema(
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     subcategory: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     price: { type: Number, required: true },
+    // Seller-specific minimum quantity and optional seller-set price
+    minQuantity: { type: Number, default: 1 },
+    sellerPrice: { type: Number },
     stock: { type: Number, default: 0 },
     images: [String],
     datasheetUrl: String,

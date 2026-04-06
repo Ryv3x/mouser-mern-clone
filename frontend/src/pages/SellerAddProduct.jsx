@@ -11,7 +11,9 @@ const SellerAddProduct = () => {
     manufacturer: '',
     manufacturerPartNumber: '',
     price: '',
+    sellerPrice: '',
     stock: '',
+    minQuantity: 1,
     description: '',
     images: [],
     category: '',
@@ -55,6 +57,14 @@ const SellerAddProduct = () => {
       setError('Valid price is required');
       return;
     }
+    if (form.sellerPrice && parseFloat(form.sellerPrice) < 0) {
+      setError('Seller price must be non-negative');
+      return;
+    }
+    if (!form.minQuantity || parseInt(form.minQuantity, 10) < 1) {
+      setError('Minimum quantity must be at least 1');
+      return;
+    }
     if (!form.stock || parseInt(form.stock) < 0) {
       setError('Valid stock quantity is required');
       return;
@@ -74,6 +84,8 @@ const SellerAddProduct = () => {
       const payload = {
         ...form,
         price: parseFloat(form.price),
+        sellerPrice: form.sellerPrice !== '' ? parseFloat(form.sellerPrice) : undefined,
+        minQuantity: parseInt(form.minQuantity, 10),
         stock: parseInt(form.stock, 10),
         images: form.images.filter((img) => img.trim()),
         specifications: specs,
@@ -201,7 +213,7 @@ const SellerAddProduct = () => {
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
                   />
                 </motion.div>
-
+                
                 <motion.div whileHover={{ scale: 1.01 }}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Stock Quantity *</label>
                   <input
@@ -213,6 +225,34 @@ const SellerAddProduct = () => {
                     placeholder="0"
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
                   />
+                </motion.div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4 mb-4">
+                <motion.div whileHover={{ scale: 1.01 }}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Seller Price (optional)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={form.sellerPrice}
+                    onChange={(e) => setForm({ ...form, sellerPrice: e.target.value })}
+                    placeholder="Leave empty to use base price"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Optional: set a seller-specific price</p>
+                </motion.div>
+
+                <motion.div whileHover={{ scale: 1.01 }}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Order Quantity</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.minQuantity}
+                    onChange={(e) => setForm({ ...form, minQuantity: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Default is 1</p>
                 </motion.div>
               </div>
 
