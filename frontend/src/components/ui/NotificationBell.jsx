@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { Bell, X, Check } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';
 import { setCredentials } from '../../store/authSlice';
 
-  const NotificationBell = () => {
+const NotificationBell = () => {
   const dispatch = useDispatch();
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
@@ -14,26 +13,19 @@ import { setCredentials } from '../../store/authSlice';
   const bellRef = useRef(null);
   const panelRef = useRef(null);
   const [panelStyle, setPanelStyle] = useState({});
-  const [portalEl, setPortalEl] = useState(null);
 
   const fetchNotifications = async () => {
     try {
-      // if no auth token, don't call notifications endpoint (prevents 401 spam)
       const token = typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
-      if (!token) {
-        setNotifications([]);
-        return;
-      }
+      if (!token) return setNotifications([]);
       setLoading(true);
       const { data } = await api.get('/users/notifications');
       setNotifications(data || []);
-      // if any approval notification exists, refresh profile
       if (data && data.some((n) => n.message?.toLowerCase().includes('approved'))) {
         const { data: user } = await api.get('/users/profile');
         dispatch(setCredentials({ user, token: localStorage.getItem('token') }));
       }
     } catch (err) {
-      // If not authenticated, clear notifications silently to avoid throwing UI errors
       if (err.response?.status === 401) {
         setNotifications([]);
         return;
@@ -44,53 +36,68 @@ import { setCredentials } from '../../store/authSlice';
     }
   };
 
-  useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(() => {
-      if (open) fetchNotifications();
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [open]);
-
-  // Compute panel position to avoid clipping; use fixed portal so it's not clipped by ancestors
+  // compute fixed panel position when opening so it won't be clipped
   useEffect(() => {
     if (!open) return;
-    const update = () => {
-      const btn = bellRef.current;
-      const panel = panelRef.current;
-      if (!btn) return;
-      const rect = btn.getBoundingClientRect();
-      const scrollY = window.scrollY || window.pageYOffset;
-      const top = rect.bottom + 8 + scrollY;
-      const right = 16; // keep small gap from edge
-      // limit max width via CSS class; set left/right to stabilize
-      setPanelStyle({ position: 'fixed', top: `${top}px`, right: `${right}px`, left: 'auto' });
+    const btn = bellRef.current;
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const scrollY = window.scrollY || window.pageYOffset;
+    const panelWidth = Math.min(384, Math.max(280, Math.floor(window.innerWidth - 32)));
+    let left = rect.left;
+    if (left + panelWidth + 16 > window.innerWidth) left = Math.max(16, window.innerWidth - panelWidth - 16);
+    if (left < 16) left = 16;
+    const top = rect.bottom + 8 + scrollY;
+    setPanelStyle({ position: 'fixed', top: `${top}px`, left: `${left}px`, width: `${Math.min(panelWidth, 420)}px`, zIndex: 9999 });
+
+    const onResize = () => {
+      const r = btn.getBoundingClientRect();
+      const t = (window.scrollY || window.pageYOffset) + r.bottom + 8;
+      let l = r.left;
+      if (l + panelWidth + 16 > window.innerWidth) l = Math.max(16, window.innerWidth - panelWidth - 16);
+      if (l < 16) l = 16;
+      setPanelStyle((s) => ({ ...s, top: `${t}px`, left: `${l}px` }));
     };
-    update();
-    window.addEventListener('resize', update);
-    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onResize, true);
     return () => {
-      window.removeEventListener('resize', update);
-      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onResize, true);
     };
   }, [open]);
 
-  // Create a stable portal container on mount to avoid targeting null
+  // close on outside click or Escape
   useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const el = document.createElement('div');
-    el.setAttribute('data-portal', 'notifications');
-    // ensure portal sits above most layout elements
-    try { el.style.zIndex = '9999'; } catch (e) {}
-    document.body.appendChild(el);
-    setPortalEl(el);
-    return () => {
-      try {
-        document.body.removeChild(el);
-      } catch (e) {}
-      setPortalEl(null);
+    if (!open) return;
+    const onDown = (e) => {
+      const panel = panelRef.current;
+      const btn = bellRef.current;
+      if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+        setOpen(false);
+      }
     };
-  }, []);
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('touchstart', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('touchstart', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  // fetch notifications when panel opens
+  useEffect(() => {
+    let interval;
+    if (open) {
+      fetchNotifications();
+      interval = setInterval(() => fetchNotifications(), 10000);
+    }
+    return () => clearInterval(interval);
+  }, [open]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -160,9 +167,7 @@ import { setCredentials } from '../../store/authSlice';
       </motion.button>
 
       <AnimatePresence>
-          {open && (() => {
-            const fallbackPanelStyle = { position: 'fixed', top: '60px', right: '16px', left: 'auto' };
-            const panelNode = (
+        {open && (
           <motion.div
             ref={panelRef}
             key="notifications-panel"
@@ -171,7 +176,7 @@ import { setCredentials } from '../../store/authSlice';
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             style={panelStyle}
-            className="w-80 md:w-96 bg-white rounded-xl shadow-2xl z-50 overflow-hidden border border-gray-200 max-w-[calc(100vw-2rem)]"
+            className="w-80 md:w-96 bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 max-w-[calc(100vw-2rem)]"
           >
             <motion.div
               className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex justify-between items-center"
@@ -190,22 +195,21 @@ import { setCredentials } from '../../store/authSlice';
               >
                 <X size={20} />
               </motion.button>
-         </motion.div>
+            </motion.div>
 
-<div className="max-h-96 overflow-y-auto">
-
-  {loading && (
-    <motion.div
-      className="p-6 text-center"
-      animate={{ opacity: [0.5, 1, 0.5] }}
-      transition={{ duration: 1.5, repeat: Infinity }}
-    >
-      <div className="inline-flex items-center gap-2">
-        <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-        <span className="text-sm text-gray-600">Loading...</span>
-      </div>
-    </motion.div>
-  )}
+            <div className="max-h-96 overflow-y-auto">
+              {loading && (
+                <motion.div
+                  className="p-6 text-center"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <div className="inline-flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+                    <span className="text-sm text-gray-600">Loading...</span>
+                  </div>
+                </motion.div>
+              )}
 
               {!loading && notifications.length === 0 && (
                 <motion.div className="p-8 text-center text-gray-500" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -226,7 +230,7 @@ import { setCredentials } from '../../store/authSlice';
                   >
                     <motion.div className="flex gap-3" onClick={() => markRead(n._id)} whileHover={{ x: 5 }}>
                       {n.image ? (
-                        <img src={n.image} alt="notif" className="w-12 h-12 rounded-md object-cover" onError={(e)=>{e.currentTarget.style.display='none'}} />
+                        <img src={n.image} alt="notif" className="w-12 h-12 rounded-md object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                       ) : (
                         <div className={`mt-1 ${getIconColor(n.type)}`}>{n.type === 'success' ? <Check size={20} /> : <Bell size={20} />}</div>
                       )}
@@ -235,7 +239,7 @@ import { setCredentials } from '../../store/authSlice';
                         <p className={`text-sm ${n.read ? 'text-gray-600' : 'text-gray-800 font-semibold'}`}>{n.message}</p>
                         <p className="text-xs text-gray-500 mt-1">{new Date(n.createdAt).toLocaleDateString()}</p>
                       </div>
-                      {!n.read && <motion.div className="w-2 h-2 bg-blue-600 rounded-full mt-2" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}></motion.div>}
+                      {!n.read && <motion.div className="w-2 h-2 bg-blue-600 rounded-full mt-2" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} />}
                     </motion.div>
                   </motion.div>
                 ))}
@@ -255,22 +259,7 @@ import { setCredentials } from '../../store/authSlice';
               </motion.div>
             )}
           </motion.div>
-          );
-          // ensure panel has a usable style if compute failed
-          const finalPanel = React.cloneElement(panelNode, { style: Object.keys(panelStyle || {}).length ? panelStyle : fallbackPanelStyle });
-
-          // Try to mount into portal; if it fails, render inline fallback to avoid crashing
-          if (portalEl) {
-            try {
-              return createPortal(finalPanel, portalEl);
-            } catch (err) {
-              console.error('Portal mount failed, falling back to inline render', err);
-              return finalPanel;
-            }
-          }
-
-          return finalPanel;
-        })()}
+        )}
       </AnimatePresence>
     </div>
   );
