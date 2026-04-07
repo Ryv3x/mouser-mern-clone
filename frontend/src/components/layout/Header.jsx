@@ -116,7 +116,7 @@ const Header = () => {
 
   return (
     <motion.header
-      className="fixed w-full top-0 z-50 bg-gradient-to-r from-primary via-primary-600 to-primary-700 shadow-lg"
+      className="fixed w-full top-0 z-50 bg-primary shadow-lg"
       initial={{ opacity: 0, y: -60 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
