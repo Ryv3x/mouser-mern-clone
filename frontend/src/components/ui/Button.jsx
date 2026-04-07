@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react';    
 
 const VARIANTS = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700',
+  primary: 'bg-primary text-gray-900 hover:bg-primary-600',
   secondary: 'bg-white text-gray-800 border border-gray-200 hover:bg-gray-50',
   danger: 'bg-red-600 text-white hover:bg-red-700',
-  ghost: 'bg-transparent text-blue-600 hover:opacity-80',
+  ghost: 'bg-transparent text-primary hover:opacity-80',
 };
 
 const Button = ({ children, variant = 'primary', className = '', type = 'button', ...rest }) => {

@@ -89,7 +89,7 @@ const AdminSellers = () => {
       <div className="max-w-7xl mx-auto">
         {toast && (
           <motion.div
-            className="fixed top-16 right-6 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50"
+            className="fixed top-16 right-6 bg-primary text-gray-900 px-4 py-2 rounded-lg shadow-lg z-50"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -138,7 +138,7 @@ const AdminSellers = () => {
           <motion.button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300'
+              filter === 'all' ? 'bg-primary text-gray-900' : 'bg-white text-gray-700 border border-gray-300'
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

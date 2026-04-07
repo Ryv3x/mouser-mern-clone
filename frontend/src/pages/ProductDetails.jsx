@@ -146,7 +146,7 @@ const ProductDetails = () => {
                   </button>
                 </>
               )}
-              <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <div className="absolute top-4 right-4 bg-primary text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
                 {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
               </div>
             </motion.div>
@@ -245,7 +245,7 @@ const ProductDetails = () => {
                 variants={itemVariants}
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 disabled:opacity-50 transition"
+                className="flex-1 bg-primary text-gray-900 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-primary-600 disabled:opacity-50 transition"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

@@ -50,7 +50,7 @@ const ProductCard = ({ product, index = 0 }) => {
           </motion.button>
           <motion.button
             onClick={() => dispatch(addToCart({ ...product, quantity: 1 }))}
-            className="p-2 bg-blue-600 rounded-full text-white hover:bg-blue-700"
+            className="p-2 bg-primary rounded-full text-gray-900 hover:bg-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >

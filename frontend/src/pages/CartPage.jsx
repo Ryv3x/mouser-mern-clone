@@ -73,7 +73,7 @@ if (cart.length === 0) {
           <motion.button
             variants={itemVariants}
             onClick={() => navigate("/")}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 hover:bg-blue-700 transition"
+            className="bg-primary text-gray-900 px-8 py-3 rounded-lg font-semibold flex items-center gap-2 hover:bg-primary-600 transition"
             whileHover={{ scale: 1.05 }}
           >
             Continue Shopping

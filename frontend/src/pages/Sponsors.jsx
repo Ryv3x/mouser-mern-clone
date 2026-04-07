@@ -123,7 +123,7 @@ const Sponsors = () => {
             </p>
             <motion.a
               href="mailto:sponsors@mouser.com"
-              className="inline-block px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              className="inline-block px-8 py-3 bg-primary text-gray-900 rounded-lg font-semibold hover:bg-primary-600 transition-colors"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

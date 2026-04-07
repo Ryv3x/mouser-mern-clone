@@ -108,7 +108,7 @@ const Footer = () => {
           {/* Brand */}
           <motion.div variants={itemVariants}>
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-10 h-10 bg-blue-600 rounded text-center leading-10 font-bold text-white">M</span>
+              <span className="w-10 h-10 bg-primary rounded text-center leading-10 font-bold text-gray-900">M</span>
               Mouser Clone
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -118,7 +118,7 @@ const Footer = () => {
             <div className="flex gap-3">
               <motion.a
                 href="#"
-                className="p-3 bg-gray-700 rounded-full hover:bg-blue-600 transition"
+                className="p-3 bg-gray-700 rounded-full hover:bg-primary transition"
                 whileHover={{ scale: 1.15, rotate: 10 }}
               >
                 <Facebook size={18} />

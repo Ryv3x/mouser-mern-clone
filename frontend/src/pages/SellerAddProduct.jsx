@@ -343,7 +343,7 @@ const SellerAddProduct = () => {
                         a.remove();
                         URL.revokeObjectURL(url);
                       }}
-                      className="px-3 py-2 bg-blue-600 text-white rounded"
+                      className="px-3 py-2 bg-primary text-gray-900 rounded"
                     >
                       Download spec sheet
                     </button>

@@ -280,7 +280,7 @@ const SellerDashboard = () => {
               <p className="text-gray-600 mb-4">No products yet</p>
               <motion.button
                 onClick={() => navigate('/seller/products/add')}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2"
+                className="bg-primary text-gray-900 px-6 py-2 rounded-lg hover:bg-primary-600 transition inline-flex items-center gap-2"
                 whileHover={{ scale: 1.05 }}
               >
                 <Plus size={20} /> Add Your First Product

@@ -342,7 +342,7 @@ const AdminHomeSettings = () => {
         <motion.button
           onClick={handleSave}
           disabled={saving}
-          className="mt-8 w-full px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 font-semibold flex items-center justify-center gap-2 transition-colors"
+          className="mt-8 w-full px-6 py-4 bg-primary text-gray-900 rounded-lg hover:bg-primary-600 disabled:bg-gray-400 font-semibold flex items-center justify-center gap-2 transition-colors"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.95 }}
         >

@@ -238,7 +238,7 @@ const CategoryPage = () => {
   <div className="mb-4 md:hidden">
     <button
       onClick={() => setShowFilters(true)}
-      className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
+      className="flex items-center gap-2 bg-primary text-gray-900 px-4 py-2 rounded-lg"
     >
       <Filter size={18} /> Show Filters
     </button>
