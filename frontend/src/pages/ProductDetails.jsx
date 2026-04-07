@@ -24,6 +24,10 @@ const ProductDetails = () => {
         setLoading(true);
         const { data } = await api.get(`/products/${productId}`);
         setProduct(data);
+        // if product defines a minimum order quantity, use it as initial quantity
+        if (data?.minQuantity && Number.isFinite(Number(data.minQuantity))) {
+          setQuantity(parseInt(data.minQuantity, 10));
+        }
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load product');
       } finally {
@@ -38,7 +42,10 @@ const ProductDetails = () => {
       navigate('/login');
       return;
     }
-    dispatch(addToCart({ ...product, quantity }));
+    const minQ = product?.minQuantity ? parseInt(product.minQuantity, 10) : 1;
+    const qtyToAdd = Math.max(minQ, quantity);
+    if (qtyToAdd !== quantity) setQuantity(qtyToAdd);
+    dispatch(addToCart({ ...product, quantity: qtyToAdd }));
   };
 
   const containerVariants = {
@@ -207,23 +214,28 @@ const ProductDetails = () => {
 
             {/* Quantity Selector */}
             <motion.div variants={itemVariants} className="flex items-center gap-4">
-              <span className="text-gray-700 font-semibold">Quantity:</span>
-              <div className="flex items-center border border-gray-300 rounded-lg">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-2 hover:bg-gray-100"
-                >
-                  −
-                </button>
-                <span className="px-6 py-2 font-semibold">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-4 py-2 hover:bg-gray-100"
-                >
-                  +
-                </button>
+              <div className="flex items-center gap-3">
+                <span className="text-gray-700 font-semibold">Quantity:</span>
+                <div className="flex items-center border border-gray-300 rounded-lg">
+                  <button
+                    onClick={() => setQuantity(Math.max(product?.minQuantity ? parseInt(product.minQuantity, 10) : 1, quantity - 1))}
+                    className="px-4 py-2 hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <span className="px-6 py-2 font-semibold">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="px-4 py-2 hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
+                {product.stock > 0 && <span className="text-green-600 font-semibold">{product.stock} available</span>}
               </div>
-              {product.stock > 0 && <span className="text-green-600 font-semibold">{product.stock} available</span>}
+              {product.minQuantity && (
+                <div className="text-sm text-gray-600">Minimum order: <span className="font-semibold">{product.minQuantity}</span></div>
+              )}
             </motion.div>
 
             {/* Action Buttons */}
