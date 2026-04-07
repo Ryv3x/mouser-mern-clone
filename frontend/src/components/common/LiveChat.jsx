@@ -75,7 +75,7 @@ const LiveChat = () => {
               <motion.button
                 onClick={() => setIsOpen(false)}
                 whileHover={{ rotate: 90 }}
-                className="p-1 hover:bg-primary rounded"
+                className="p-1 hover:bg-blue-600 rounded"
               >
                 <X size={20} />
               </motion.button>
@@ -93,7 +93,7 @@ const LiveChat = () => {
                   <div
                     className={`max-w-xs px-4 py-2 rounded-2xl ${
                       message.sender === 'user'
-                        ? 'bg-primary text-gray-900 rounded-br-none'
+                        ? 'bg-blue-600 text-white rounded-br-none'
                         : 'bg-gray-200 text-gray-900 rounded-bl-none'
                     }`}
                   >
@@ -119,7 +119,7 @@ const LiveChat = () => {
                 />
                 <motion.button
                   onClick={handleSendMessage}
-                  className="p-2 bg-primary text-gray-900 rounded-lg hover:bg-primary-600 transition"
+                  className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

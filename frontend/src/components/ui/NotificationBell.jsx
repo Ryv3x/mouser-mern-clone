@@ -205,7 +205,7 @@ const NotificationBell = () => {
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
                   <div className="inline-flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
                     <span className="text-sm text-gray-600">Loading...</span>
                   </div>
                 </motion.div>
@@ -239,7 +239,7 @@ const NotificationBell = () => {
                         <p className={`text-sm ${n.read ? 'text-gray-600' : 'text-gray-800 font-semibold'}`}>{n.message}</p>
                         <p className="text-xs text-gray-500 mt-1">{new Date(n.createdAt).toLocaleDateString()}</p>
                       </div>
-                      {!n.read && <motion.div className="w-2 h-2 bg-primary rounded-full mt-2" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} />}
+                      {!n.read && <motion.div className="w-2 h-2 bg-blue-600 rounded-full mt-2" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }} />}
                     </motion.div>
                   </motion.div>
                 ))}

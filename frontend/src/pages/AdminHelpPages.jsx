@@ -108,7 +108,7 @@ const AdminHelpPages = () => {
             </div>
             <button
               onClick={handleSave}
-              className="px-6 py-2 bg-primary text-gray-900 rounded hover:bg-primary-600 transition"
+              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
             >
               Save
             </button>

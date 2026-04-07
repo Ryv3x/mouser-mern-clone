@@ -80,11 +80,11 @@ const SellerEditProduct = () => {
               const blob = new Blob([JSON.stringify(specsObj, null, 2)], { type: 'application/json' });
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a'); a.href = url; a.download = `${(form.name || 'product').replace(/\s+/g, '_')}_specs.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-            }} className="px-3 py-2 bg-primary text-gray-900 rounded">Download spec sheet</button>
+            }} className="px-3 py-2 bg-blue-600 text-white rounded">Download spec sheet</button>
           </div>
         </div>
 
-        <button type="submit" className="bg-primary text-gray-900 px-4 py-2 rounded" disabled={submitting}>{submitting ? 'Saving…' : 'Save Changes'}</button>
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={submitting}>{submitting ? 'Saving…' : 'Save Changes'}</button>
       </form>
     </motion.div>
   );

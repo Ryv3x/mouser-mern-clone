@@ -21,7 +21,7 @@ const RoleRoute = ({ role, children }) => {
           <p className="text-lg font-semibold text-red-600 mb-4">Access Denied</p>
           <p className="text-gray-700 mb-6">Your role no longer permits viewing this page.</p>
           <motion.button
-            className="px-4 py-2 bg-primary text-gray-900 rounded-lg"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => window.location.replace('/')}

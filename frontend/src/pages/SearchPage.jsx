@@ -118,7 +118,7 @@ const SearchPage = () => {
             />
             <button
               type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-primary text-gray-900 p-2 rounded-lg hover:bg-primary-600 transition"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
             >
               <Search size={20} />
             </button>
@@ -229,7 +229,7 @@ const SearchPage = () => {
             <div className="mb-4 md:hidden">
               <button
                 onClick={() => setShowFilters(true)}
-                className="flex items-center gap-2 bg-primary text-gray-900 px-4 py-2 rounded-lg"
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
               >
                 <Filter size={18} /> Show Filters
               </button>

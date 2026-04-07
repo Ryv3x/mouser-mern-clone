@@ -371,7 +371,7 @@ const Home = () => {
             >
               <button
                 onClick={() => navigate('/categories')}
-                className="px-8 py-3 bg-primary text-gray-900 font-semibold rounded-lg hover:bg-primary-600 transition-colors inline-flex items-center gap-2"
+                className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
               >
                 View All Categories
                 <ChevronRight size={20} />
@@ -424,7 +424,7 @@ Most popular components engineers are buying right now.
           onClick={() => setActiveTab(tab.id)}
           className={`w-full px-4 py-3 rounded-lg flex items-center gap-3 transition-all
           ${activeTab === tab.id
-            ? 'bg-primary text-gray-900'
+            ? 'bg-blue-600 text-white'
             : 'text-gray-600 hover:bg-gray-100'}`}
         >
           <tab.icon size={18} />
@@ -463,7 +463,7 @@ Most popular components engineers are buying right now.
 
 {/* Stats Section */}
 <motion.section
-        className="py-20 px-4 sm:px-6 bg-primary text-gray-900"
+        className="py-20 px-4 sm:px-6 bg-blue-600 text-white"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -692,7 +692,7 @@ Most popular components engineers are buying right now.
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 onClick={() => navigate('/register')}
-                className="px-8 py-4 bg-primary text-gray-900 font-bold rounded-lg hover:bg-primary-600 transition-colors inline-flex items-center justify-center gap-2"
+                className="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center justify-center gap-2"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

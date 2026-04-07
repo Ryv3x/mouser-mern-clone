@@ -104,7 +104,7 @@ const ProductReviews = ({ productId }) => {
           <motion.div variants={itemVariants}>
             <motion.button
               onClick={() => setShowForm(!showForm)}
-              className="w-full bg-primary text-gray-900 py-4 rounded-lg font-semibold hover:bg-primary-600 transition"
+              className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition"
               whileHover={{ scale: 1.02 }}
             >
               Write a Review
@@ -171,7 +171,7 @@ const ProductReviews = ({ productId }) => {
               <div className="flex gap-4">
                 <motion.button
                   type="submit"
-                  className="flex-1 bg-primary text-gray-900 py-2 rounded-lg font-semibold hover:bg-primary-600 transition"
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
                   whileHover={{ scale: 1.02 }}
                 >
                   Submit Review

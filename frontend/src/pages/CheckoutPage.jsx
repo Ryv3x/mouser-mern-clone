@@ -159,7 +159,7 @@ const CheckoutPage = () => {
           </h2>
           <button
             onClick={() => navigate('/')}
-            className="bg-primary text-gray-900 px-6 py-2 rounded"
+            className="bg-blue-600 text-white px-6 py-2 rounded"
           >
             Go Shopping
           </button>
@@ -288,7 +288,7 @@ const CheckoutPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-gray-900 w-full py-3 rounded flex items-center justify-center gap-2"
+            className="bg-blue-600 text-white w-full py-3 rounded flex items-center justify-center gap-2"
           >
             {loading ? 'Processing...' : 'Place Order'}
             <ArrowRight size={18} />

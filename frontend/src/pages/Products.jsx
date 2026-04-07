@@ -180,7 +180,7 @@ const Products = () => {
             {/* Mobile Filter Button */}
             <motion.button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden mb-6 w-full px-4 py-3 bg-primary text-gray-900 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-600 transition-colors"
+              className="lg:hidden mb-6 w-full px-4 py-3 bg-blue-600 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
               variants={itemVariants}
             >
               <Filter size={20} /> {showFilters ? 'Hide' : 'Show'} Filters

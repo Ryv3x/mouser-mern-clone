@@ -116,7 +116,7 @@ const Header = () => {
 
   return (
     <motion.header
-      className="fixed w-full top-0 z-50 bg-primary shadow-lg"
+      className="fixed w-full top-0 z-50 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 shadow-lg"
       initial={{ opacity: 0, y: -60 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -131,12 +131,12 @@ const Header = () => {
           {/* Logo & Branding */}
               <motion.div variants={itemVariants}>
             <Link to="/" className="flex items-center gap-2 text-white group">
-                <motion.div
+              <motion.div
                 className="w-9 h-9 bg-white rounded-lg flex items-center justify-center group-hover:scale-105"
                 whileHover={{ scale: 1.05, rotate: 4 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <span className="text-primary font-bold text-base">M</span>
+                <span className="text-blue-700 font-bold text-base">M</span>
               </motion.div>
               <span className="font-bold text-lg hidden sm:inline">Mouser</span>
             </Link>
@@ -145,13 +145,13 @@ const Header = () => {
           {/* Desktop Navigation - Center */}
           <motion.nav className="hidden lg:flex items-center gap-8" variants={containerVariants} initial="hidden" animate="visible">
             <motion.div variants={itemVariants}>
-              <Link to="/" className="text-white hover:text-yellow-100 font-medium transition duration-300">
+              <Link to="/" className="text-white hover:text-blue-100 font-medium transition duration-300">
                 Home
               </Link>
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <Link to="/products" className="text-white hover:text-yellow-100 font-medium transition duration-300">
+              <Link to="/products" className="text-white hover:text-blue-100 font-medium transition duration-300">
                 Products
               </Link>
             </motion.div>
@@ -177,7 +177,7 @@ const Header = () => {
                       <Link
                         key={cat.slug}
                         to={`/category/${cat.slug}`}
-                        className="block px-4 py-2 text-gray-700 hover:bg-yellow-50 transition"
+                        className="block px-4 py-2 text-gray-700 hover:bg-blue-100 transition"
                         onClick={() => setShowCategories(false)}
                       >
                         {cat.name}
@@ -213,10 +213,10 @@ const Header = () => {
                 // set explicit height so the adjacent button can mirror it
                 className="px-4 py-2 h-10 rounded-l-lg focus:outline-none w-48 text-gray-700"
               />
-                <motion.button
+              <motion.button
                 type="submit"
                 // match the input height; h-full was unreliable inside flex container
-                className="px-3 bg-primary text-gray-900 rounded-r-lg hover:bg-primary-600 transition h-10 flex items-center justify-center"
+                className="px-3 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition h-10 flex items-center justify-center"
                 whileHover={{ scale: 1.05 }}
               >
                 <Search size={18} />
@@ -314,7 +314,7 @@ const Header = () => {
                 <motion.div variants={itemVariants} className="hidden sm:block">
                   <Link
                     to="/login"
-                    className="px-4 py-2 text-white border-2 border-white rounded-lg font-semibold hover:bg-white hover:text-primary transition duration-300 text-sm"
+                    className="px-4 py-2 text-white border-2 border-white rounded-lg font-semibold hover:bg-white hover:text-blue-700 transition duration-300 text-sm"
                   >
                     Login
                   </Link>
@@ -322,7 +322,7 @@ const Header = () => {
                 <motion.div variants={itemVariants} className="hidden sm:block">
                   <Link
                     to="/register"
-                    className="px-4 py-2 bg-white text-primary rounded-lg font-semibold hover:bg-yellow-50 transition duration-300 text-sm"
+                    className="px-4 py-2 bg-white text-blue-700 rounded-lg font-semibold hover:bg-blue-100 transition duration-300 text-sm"
                   >
                     Sign Up
                   </Link>
@@ -363,7 +363,7 @@ const Header = () => {
                 />
                 <motion.button
                   type="submit"
-                  className="px-3 py-2 bg-primary text-gray-900 rounded-lg hover:bg-primary-600"
+                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   whileHover={{ scale: 1.05 }}
                 >
                   <Search size={18} />
