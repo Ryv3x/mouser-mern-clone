@@ -17,7 +17,7 @@ const SellerAddProduct = () => {
     description: '',
     images: [],
     category: '',
-    specifications: '',
+    specifications: [],
   });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -72,14 +72,12 @@ const SellerAddProduct = () => {
 
     try {
       setSubmitting(true);
+      // build specs object from array of entries
       let specs = {};
-      if (form.specifications === 'idk') specs = {};
-      else if (form.specifications) {
-        try {
-          specs = JSON.parse(form.specifications);
-        } catch (e) {
-          specs = {};
-        }
+      if (Array.isArray(form.specifications)) {
+        form.specifications.forEach((s) => {
+          if (s && s.key && String(s.key).trim()) specs[String(s.key).trim()] = s.value || '';
+        });
       }
       const payload = {
         ...form,
@@ -299,14 +297,58 @@ const SellerAddProduct = () => {
               </motion.div>
 
               <motion.div whileHover={{ scale: 1.01 }}>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Specifications (JSON)</label>
-                <textarea
-                  value={form.specifications}
-                  onChange={(e) => setForm({ ...form, specifications: e.target.value })}
-                  placeholder='{"voltage": "5V", "current": "50mA"}'
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200 transition resize-none"
-                  rows={3}
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Specifications</label>
+                <div className="space-y-2">
+                  {(form.specifications || []).map((s, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <input
+                        placeholder="Key (e.g., Voltage)"
+                        value={s.key}
+                        onChange={(e) => {
+                          const copy = [...form.specifications];
+                          copy[idx] = { ...copy[idx], key: e.target.value };
+                          setForm({ ...form, specifications: copy });
+                        }}
+                        className="flex-1 px-3 py-2 border rounded"
+                      />
+                      <input
+                        placeholder="Value (e.g., 5V)"
+                        value={s.value}
+                        onChange={(e) => {
+                          const copy = [...form.specifications];
+                          copy[idx] = { ...copy[idx], value: e.target.value };
+                          setForm({ ...form, specifications: copy });
+                        }}
+                        className="flex-1 px-3 py-2 border rounded"
+                      />
+                      <button type="button" onClick={() => setForm({ ...form, specifications: form.specifications.filter((_, i) => i !== idx) })} className="p-2 text-red-600">Remove</button>
+                    </div>
+                  ))}
+
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setForm({ ...form, specifications: [...(form.specifications || []), { key: '', value: '' }] })} className="px-3 py-2 bg-green-600 text-white rounded">Add spec</button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // download specs as JSON
+                        const specsObj = {};
+                        (form.specifications || []).forEach((s) => { if (s && s.key) specsObj[s.key] = s.value; });
+                        const blob = new Blob([JSON.stringify(specsObj, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${(form.name || 'product').replace(/\s+/g, '_')}_specs.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="px-3 py-2 bg-blue-600 text-white rounded"
+                    >
+                      Download spec sheet
+                    </button>
+                  </div>
+                </div>
               </motion.div>
             </div>
 

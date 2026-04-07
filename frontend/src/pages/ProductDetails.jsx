@@ -5,6 +5,7 @@ import { ShoppingCart, Heart, Share2, ChevronLeft, ChevronRight, Star, Truck, Sh
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/cartSlice';
 import ProductReviews from '../components/product/ProductReviews';
+import ProductSpecifications from '../components/product/ProductSpecifications';
 import api from '../services/api';
 
 const ProductDetails = () => {
@@ -295,6 +296,26 @@ const ProductDetails = () => {
         </motion.div>
 
         {/* Reviews Section */}
+        <ProductSpecifications specs={product.specifications} />
+        <div className="mt-4">
+          <button
+            onClick={() => {
+              const specs = product.specifications || {};
+              const blob = new Blob([JSON.stringify(specs, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${(product.name || 'product').replace(/\s+/g, '_')}_specs.json`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(url);
+            }}
+            className="px-3 py-2 bg-blue-600 text-white rounded"
+          >
+            Download Spec Sheet
+          </button>
+        </div>
         <ProductReviews productId={productId} />
 
         {/* Frequently Bought Together */}
