@@ -49,7 +49,11 @@ const ProductCard = ({ product, index = 0 }) => {
             <Eye size={20} />
           </motion.button>
           <motion.button
-            onClick={() => dispatch(addToCart({ ...product, quantity: 1 }))}
+            onClick={() => {
+              const minQ = product?.minQuantity ? parseInt(product.minQuantity, 10) : 1;
+              const qty = Number.isNaN(minQ) || minQ < 1 ? 1 : minQ;
+              dispatch(addToCart({ ...product, quantity: qty }));
+            }}
             className="p-2 bg-blue-600 rounded-full text-white hover:bg-blue-700"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}

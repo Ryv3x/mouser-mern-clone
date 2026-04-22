@@ -5,6 +5,8 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductReviews,
+  addProductReview,
 } from '../controllers/productController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorize } from '../middleware/roleMiddleware.js';
@@ -12,6 +14,9 @@ import { authorize } from '../middleware/roleMiddleware.js';
 const router = express.Router();
 
 router.get('/', getProducts);
+// product-specific subroutes first (keep reviews before the generic get by id)
+router.get('/:id/reviews', getProductReviews);
+router.post('/:id/reviews', protect, addProductReview);
 router.get('/:id', getProductById);
 router.post('/', protect, authorize('seller', 'admin'), createProduct);
 router.put('/:id', protect, authorize('seller', 'admin'), updateProduct);

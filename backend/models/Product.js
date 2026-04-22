@@ -18,6 +18,20 @@ const productSchema = new mongoose.Schema(
     specifications: mongoose.Schema.Types.Mixed,
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     active: { type: Boolean, default: false },
+    // Reviews stored on the product document
+    rating: { type: Number, default: 0 },
+    reviews: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        name: String,
+        rating: Number,
+        title: String,
+        content: String,
+        createdAt: { type: Date, default: Date.now },
+        helpful: { type: Number, default: 0 },
+      },
+    ],
+    numReviews: { type: Number, default: 0 },
     reviewStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     reviewNote: { type: String },
   },

@@ -182,11 +182,15 @@ const ProductDetails = () => {
               </motion.p>
               <motion.div variants={itemVariants} className="flex items-center gap-2">
                 <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      size={16}
+                      className={i < Math.round(product.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                    />
                   ))}
                 </div>
-                <span className="text-gray-600">(0 reviews)</span>
+                <span className="text-gray-600">({product.numReviews || (product.reviews ? product.reviews.length : 0)} reviews)</span>
               </motion.div>
             </div>
 

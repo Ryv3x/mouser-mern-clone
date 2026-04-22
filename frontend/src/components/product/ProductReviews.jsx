@@ -1,27 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, ThumbsUp } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import api from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const ProductReviews = ({ productId }) => {
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      author: 'John Smith',
-      rating: 5,
-      date: '2024-01-15',
-      title: 'Excellent Quality!',
-      content: 'Perfect product, exactly as described. Fast shipping too!',
-      helpful: 24,
-    },
-    {
-      id: 2,
-      author: 'Sarah Johnson',
-      rating: 4,
-      date: '2024-01-10',
-      content: 'Good value for money. Works great for my projects.',
-      helpful: 12,
-    },
-  ]);
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [serverRating, setServerRating] = useState(0);
 
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,21 +16,73 @@ const ProductReviews = ({ productId }) => {
     title: '',
     content: '',
   });
-
-  const handleSubmitReview = (e) => {
-    e.preventDefault();
-    const newReview = {
-      id: reviews.length + 1,
-      author: 'You',
-      rating: formData.rating,
-      date: new Date().toISOString().split('T')[0],
-      title: formData.title,
-      content: formData.content,
-      helpful: 0,
+  const [submitting, setSubmitting] = useState(false);
+  const user = useSelector((s) => s.auth.user);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    let mounted = true;
+    const fetchReviews = async () => {
+      try {
+        setLoadingReviews(true);
+        const { data } = await (await import('../../services/api')).default.get(`/products/${productId}/reviews`);
+        if (!mounted) return;
+        const mapped = (data.reviews || []).map((r) => ({
+          id: r._id || r.id,
+          author: r.name || r.author || 'Anonymous',
+          rating: r.rating || 0,
+          date: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : (r.date || ''),
+          title: r.title || '',
+          content: r.content || r.comment || '',
+          helpful: r.helpful || 0,
+        }));
+        setReviews(mapped);
+        setServerRating(data.rating || 0);
+      } catch (err) {
+        // ignore for now
+      } finally {
+        if (mounted) setLoadingReviews(false);
+      }
     };
-    setReviews([newReview, ...reviews]);
-    setFormData({ rating: 5, title: '', content: '' });
-    setShowForm(false);
+    fetchReviews();
+    return () => {
+      mounted = false;
+    };
+  }, [productId]);
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    try {
+      setSubmitting(true);
+      const payload = { rating: formData.rating, title: formData.title, content: formData.content };
+      const { data } = await api.post(`/products/${productId}/reviews`, payload);
+      const added = data.review;
+      // normalize returned review for UI
+      const uiReview = {
+        id: added._id || Date.now(),
+        author: added.name || (user.name || user.email),
+        rating: added.rating,
+        date: new Date().toISOString().split('T')[0],
+        title: added.title,
+        content: added.content,
+        helpful: added.helpful || 0,
+      };
+      const newReviews = [uiReview, ...reviews];
+      setReviews(newReviews);
+      // update serverRating locally
+      setServerRating((newReviews.reduce((s, r) => s + (r.rating || 0), 0) / newReviews.length) || 0);
+      setFormData({ rating: 5, title: '', content: '' });
+      setShowForm(false);
+    } catch (err) {
+      console.error('Submit review error', err);
+      // optionally show toast
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const containerVariants = {
@@ -63,7 +102,8 @@ const ProductReviews = ({ productId }) => {
     },
   };
 
-  const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+  const computedAvg = reviews.length ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length) : 0;
+  const avgRating = (serverRating || computedAvg).toFixed(1);
 
   return (
     <motion.div
